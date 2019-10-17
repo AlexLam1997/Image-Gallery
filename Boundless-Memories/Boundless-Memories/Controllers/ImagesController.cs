@@ -32,17 +32,12 @@ namespace Memories.Controllers
         }
 
 		[HttpGet("get")]
-		public HttpResponseMessage GetImage(Guid guid)
+		public IActionResult GetImage(Guid guid)
 		{
-			var result = m_ImageManagement.GetImage(guid).Result;
+			var path = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\UserImages"));
 
-			MemoryStream ms = new MemoryStream(result.Payload.Data);
-
-			HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
-			response.Content = new StreamContent(ms);
-			response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
-
-			return response;
+			Byte[] b = System.IO.File.ReadAllBytes(Path.Combine(path, "test.jpg"));   // You can use your own method over here.         
+			return File(b, "image/jpeg");
 		}
 
 		[HttpGet("{imageId:int}")]

@@ -29,8 +29,10 @@ namespace Memories
 			services.AddSingleton<IHostingEnvironment>(HostingEnvironment);
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+		
+			// TODO add authorization 
 
-            var connection = @"Server=.\SQLEXPRESS;Database=Memories;Trusted_Connection=True;ConnectRetryCount=0";
+			var connection = @"Server=.\SQLEXPRESS;Database=Memories;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<MemoriesContext>(options => options.UseSqlServer(connection));
         }
 

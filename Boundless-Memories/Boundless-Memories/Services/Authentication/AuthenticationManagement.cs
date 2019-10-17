@@ -60,8 +60,8 @@ namespace Memories.Services.Authentication
 
                     //generate token
                     var token = new JwtSecurityToken(
-                        issuer: "Foodometer",
-                        audience: "Foodometer",
+                        issuer: "Memories",
+                        audience: "Memories",
                         claims: claims,
                         expires: expirationTime,
                         signingCredentials: signingCredentials
