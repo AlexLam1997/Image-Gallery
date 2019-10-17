@@ -23,12 +23,16 @@ namespace Memories.Controllers
             m_ImageManagement = ImageHandler;
         }
 
-
+		/// <summary>
+		/// Uploads the list of image files
+		/// </summary>
+		/// <param name="files"></param>
+		/// <returns></returns>
         [HttpPost("upload")]
         public async Task<IActionResult> UploadImageAsync(List<IFormFile> files)
         {
-			var result = await m_ImageManagement.UploadImageAsync(files);
-            return ProcessResponse(result);
+			var uploadSuccess = await m_ImageManagement.UploadImageAsync(files);
+            return ProcessResponse(uploadSuccess);
         }
 
 		/// <summary>
@@ -40,8 +44,8 @@ namespace Memories.Controllers
 		[HttpGet("get")]
 		public async Task<IActionResult> GetImageAsync()
 		{
-			var result = await m_ImageManagement.GetImagesAsync();
-			return ProcessResponse(result);
+			var userImages = await m_ImageManagement.GetImagesAsync();
+			return ProcessResponse(userImages);
 		}
 
 		/// <summary>
@@ -49,7 +53,7 @@ namespace Memories.Controllers
 		/// </summary>
 		/// <param name="imageGuid"></param>
 		/// <returns></returns>
-		[HttpGet("get/{imageGuid : Guid}")]
+		[HttpGet("get/{imageGuid:Guid}")]
 		public async Task<IActionResult> GetImage(Guid imageGuid)
 		{
 			var imageByteArray = await m_ImageManagement.GetImageBytesByGuidAsync(imageGuid);

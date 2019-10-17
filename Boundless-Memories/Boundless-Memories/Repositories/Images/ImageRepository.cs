@@ -73,6 +73,18 @@ namespace Boundless_Memories.Repositories.ImageRepository
 			return images;
 		}
 
+		public async Task<List<Images>> GetOwnedImages(int userId)
+		{
+			var userImages = await m_MemoriesContext.ImageAssociations.AsNoTracking()
+				.Where(x => x.UserId == userId)
+				.Where(x => x.IsOwner)
+				.Include(x => x.Image)
+				.Select(x => x.Image)
+				.ToListAsync();
+
+			return userImages;
+		}
+
 		/// <summary>
 		/// Creates the list of images in the database and the corresponding associations to the specified user
 		/// </summary>
@@ -94,6 +106,34 @@ namespace Boundless_Memories.Repositories.ImageRepository
 			await m_MemoriesContext.ImageAssociations.AddRangeAsync(userImageLinks);
 
 			return await m_MemoriesContext.SaveChangesAsync() >= 1;
+		}
+
+		public async Task<bool> DeleteImagesAsync(List<Guid> imageGuids)
+		{
+			var dbImages = m_MemoriesContext.Images.Where(x => imageGuids.Any(a => a == x.StorageName));
+			foreach(Images img in dbImages)
+			{
+				img.IsDeleted = true;
+			}
+			m_MemoriesContext.UpdateRange(dbImages);
+
+			return await m_MemoriesContext.SaveChangesAsync() >= 1;
+		}
+
+		public async Task<List<Guid>> AddImageAssociationAsync (int userId, List<Guid> imageGuids)
+		{
+			// Find the existing images in the db that are apart of the list
+			var imagesToLink = m_MemoriesContext.Images.Where(x => imageGuids.Any(a => a == x.StorageName));
+
+			var userImageLinks = imagesToLink.Select(x => new ImageAssociations
+			{
+				UserId = userId,
+				Image = x
+			});
+
+			await m_MemoriesContext.ImageAssociations.AddRangeAsync(userImageLinks);
+			await m_MemoriesContext.SaveChangesAsync();
+			return imagesToLink.Select(x => x.StorageName).ToList();
 		}
 	}
 }

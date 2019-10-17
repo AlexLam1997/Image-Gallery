@@ -1,17 +1,13 @@
 Backend: 
 Add image: 
-Upload image file
-save link to database
-associate link with user (ownership of image) 
+
 add details to image (title, location, etc. All user entered when they upload) 
-allow shared permissions of image 
+
 email when shared (?) 
 
 Get image: 
-Get image per user
-allow sharing of images 
+
 Remove image: 
-Delete image based on id or something. Deactivate the link, remove image from filesystem 
 
 Frontend: 
 Login page 

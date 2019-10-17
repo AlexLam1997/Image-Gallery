@@ -14,6 +14,7 @@ namespace Memories.Services.ImageManagement
 		Task<BaseBodyResponse<List<Images>>> GetImagesAsync();
 		Task<BaseBodyResponse<bool>> UploadImageAsync(List<IFormFile> images);
 		Task<Byte[]> GetImageBytesByGuidAsync(Guid guid);
-
+		Task<BaseResponse> ShareImagesAsync(List<Guid> imageGuids);
+		Task<BaseResponse> DeleteImagesAsync(List<Guid> imageGuids);
 	}
 }

@@ -14,6 +14,7 @@ namespace Boundless_Memories.Common.Database.Entities
         public string FileName { get; set; }
         public Guid StorageName { get; set; }
         public DateTime Uploaded { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual ICollection<ImageAssociations> ImageAssociations { get; set; }
     }

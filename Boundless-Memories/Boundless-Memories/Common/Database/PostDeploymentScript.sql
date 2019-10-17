@@ -16,6 +16,7 @@ CREATE TABLE Images
     [FileName] NVARCHAR NOT NULL,
 	[StorageName] UNIQUEIDENTIFIER NOT NULL,
 	[Uploaded] DATETIME NOT NULL default GETDATE(), 
+	[IsDeleted] BIT NOT NULL default 0, 
 	CONSTRAINT [Images_PK] PRIMARY KEY ([Id])
 ) 
 
@@ -23,7 +24,12 @@ CREATE TABLE ImageAssociations
 (
 	[UserId] INT NOT NULL,
 	[ImageId] INT NOT NULL,
+	[IsOwner] BIT NOT NULL default 1, 
 	CONSTRAINT [FK_ImageAssociations_Users] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([Id]),
 	CONSTRAINT [FK_ImageAssociations_Images] FOREIGN KEY ([ImageId]) REFERENCES [dbo].[Images] ([Id]),
 	CONSTRAINT [ImageAssociations_PK] PRIMARY KEY CLUSTERED ([UserId] ASC, [ImageId] ASC)
 )
+
+drop table ImageAssociations
+drop table Images
+drop table Users
