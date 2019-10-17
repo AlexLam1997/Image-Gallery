@@ -8,8 +8,8 @@ namespace Boundless_Memories.Repositories.ImageRepository
 {
 	public interface IImageRepository
 	{
-		Task<List<Images>> UploadImages(List<Images> images);
-		Task<Images> GetImage(Guid guid);
-		Task<Images> GetImageById(int id);
+		Task<List<Images>> UploadImagesAsync(List<Images> images);
+		Task<List<Images>> GetImagesAsync(int userId);
+		Task<bool> CreateImagesAsync(List<Images> images, int userId);
 	}
 }

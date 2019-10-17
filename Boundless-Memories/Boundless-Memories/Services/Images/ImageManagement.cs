@@ -2,109 +2,71 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Boundless_Memories.Extensions;
 using Boundless_Memories.Repositories.ImageRepository;
-using Memories.Services.Errors;
-using Memories.Models.Images;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Memories.Common.Security;
+using Boundless_Memories.Common.Database.Entities;
+using System.Linq;
+using Memories.Models.Images;
 
 namespace Memories.Services.ImageManagement
 {
 	public class ImageManagement : IImageManagement
-    {
+	{
 		private readonly IImageRepository m_ImageRepository;
 		private readonly IHostingEnvironment m_HostingEnvironment;
+		private readonly IAuthorizationContext m_AuthorizationContext;
 
-		public ImageManagement(IImageRepository imageRepository, IHostingEnvironment hostingEnvironment)
+		public ImageManagement(IImageRepository imageRepository, IHostingEnvironment hostingEnvironment, IAuthorizationContext authorizationContext)
 		{
 			m_ImageRepository = imageRepository;
 			m_HostingEnvironment = hostingEnvironment;
+			m_AuthorizationContext = authorizationContext;
 		}
 
-        public async Task<BaseBodyResponse<UploadImageResponse>> UploadImageAsync(List<IFormFile> files)
-        {
-			if (files.Count == 0)
-			{
-				return new BaseBodyResponse<UploadImageResponse>(new ManagementError(EnumManagementError.NOT_AN_IMAGE));
-			}
-
-			// TODO Check if not an image
-
-			try
-			{
-				var images = files.Select(x => x.ToImage()).ToList();
-
-				var imagesUploaded = await m_ImageRepository.UploadImages(images);
-
-				if (imagesUploaded == null)
-				{
-					return new BaseBodyResponse<UploadImageResponse>(new ManagementError(EnumManagementError.UNKNOWN_ERROR));
-				}
-
-				var imageIds = imagesUploaded.Select(x => x.Id).ToList();
-				var imageGuids = imagesUploaded.Select(x => (Guid) x.Guid).ToList();
-
-
-				var response = new UploadImageResponse
-				{
-					ImageIds = imageIds,
-					ImageGuids = imageGuids
-				};
-
-				return new BaseBodyResponse<UploadImageResponse>(response);
-
-			}
-			catch(Exception e)
-			{
-				// TODO 
-				Console.Out.WriteLine(e);
-				return new BaseBodyResponse<UploadImageResponse>(new ManagementError(EnumManagementError.UNKNOWN_ERROR));
-			}
-		}
-
-		public async Task<BaseBodyResponse<GetImageResponse>> GetImage(Guid guid)
+		public async Task<BaseBodyResponse<List<Images>>> GetImageAsync()
 		{
+			var userId = m_AuthorizationContext.getCurrentUserId();
+
 			// error check
-			var image = await m_ImageRepository.GetImage(guid);
-			var response = new GetImageResponse
-			{
-				ContentType = image.ContentType,
-				Data = image.Data
-			};
-			return new BaseBodyResponse<GetImageResponse>(response);
+			var response = await m_ImageRepository.GetImagesAsync(userId);
+			return new BaseBodyResponse<List<Images>>(response);
 		}
 
-		public async Task<BaseBodyResponse<GetImageResponse>> GetImageById(int id)
+		public async Task<BaseBodyResponse<bool>> UploadImageAsync(List<IFormFile> files)
 		{
-			// error check
-			var image = await m_ImageRepository.GetImageById(id);
-			var response = new GetImageResponse
+			var fileImages = files.Select(x => new ImageWithFile
 			{
-				ContentType = image.ContentType,
-				Data = image.Data
-			};
-			return new BaseBodyResponse<GetImageResponse>(response);
-		}
+				Image = new Images
+				{
+					FileName = x.FileName,
+					StorageName = new Guid()
+				},
+				File = x
+			}).ToList();
 
-		public async Task<BaseBodyResponse<bool>> UploadImageToDisk(List<IFormFile> images)
-		{
 			var uploads = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\UserImages"));
-			foreach (var image in images)
+
+			foreach (var fileImage in fileImages)
 			{
-				if (image.Length > 0)
+				// Save images to filesystem
+				if (fileImage.File.Length > 0)
 				{
-					var filePath = Path.Combine(uploads, image.FileName);
+					var filePath = Path.Combine(uploads, fileImage.Image.StorageName.ToString());
 					using (var fileStream = new FileStream(filePath, FileMode.Create))
 					{
-						await image.CopyToAsync(fileStream);
+						await fileImage.File.CopyToAsync(fileStream);
 					}
 				}
 			}
 
-			return new BaseBodyResponse<bool>(true);
+			var images = fileImages.Select(x => x.Image).ToList();
+
+			var response = await m_ImageRepository.CreateImagesAsync(images);
+
+			return new BaseBodyResponse<bool>(response);
 		}
 	}
 }

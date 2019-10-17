@@ -2,7 +2,7 @@
 
 <template>
   <div class = "row">
-      <img height="400px" width = "400px" v-for="img in images" v-bind:src="img"/>
+      <img height="400px" width = "400px" v-for="img in images" :key= "img" v-bind:src="img"/>
   </div>
 </template>
 

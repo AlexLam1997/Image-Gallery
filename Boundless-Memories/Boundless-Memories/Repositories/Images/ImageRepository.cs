@@ -18,7 +18,7 @@ namespace Boundless_Memories.Repositories.ImageRepository
 			m_MemoriesContext = FoodometerContext;
 		}
 
-		public async Task<List<Images>> UploadImages(List<Images> images)
+		public async Task<List<Images>> UploadImagesAsync(List<Images> images)
 		{
 			await m_MemoriesContext.Images.AddRangeAsync(images);
 			try
@@ -33,18 +33,24 @@ namespace Boundless_Memories.Repositories.ImageRepository
 			}
 		}
 
-		public async Task<Images> GetImage(Guid guid)
+		public async Task<List<Images>> GetImagesAsync(int userId)
 		{
-			Images image = await m_MemoriesContext.Images.SingleOrDefaultAsync(m => m.Guid == guid);
+			var images = await m_MemoriesContext.ImageAssociations.AsNoTracking()
+				.Include(x => x.Image)
+				.Include(x => x.User)
+				.Where(x => x.UserId == userId)
+				.Select(x => x.Image)
+				.ToListAsync();
 
-			return image;
+			return images;
 		}
 
-		public async Task<Images> GetImageById(int id)
+		public async Task<bool> CreateImagesAsync(List<Images> images, int userId)
 		{
-			Images image = await m_MemoriesContext.Images.SingleOrDefaultAsync(m => m.Id == id);
-
-			return image;
+			var user = await m_MemoriesContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+			await m_MemoriesContext.Images.AddRangeAsync(images);
+			return await m_MemoriesContext.SaveChangesAsync() >= 1;
 		}
+
 	}
 }
