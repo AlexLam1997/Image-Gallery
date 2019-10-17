@@ -127,15 +127,15 @@ namespace Memories.Services.ImageManagement
 		private async Task<bool> IsUserOwner(int userId, List<Guid> imageGuids)
 		{
 			var userOwnedImages = await m_ImageRepository.GetOwnedImages(userId);
+			var userImageGuids = userOwnedImages.Select(x => x.StorageName);
 
-			var result = imageGuids.Where(i => !userOwnedImages.Any(i2 => i2.StorageName == i));
+			var unownedImages = imageGuids.Except(userImageGuids);
 
 			// user is trying to delete images that he does not own
-			if (result.Any())
+			if (unownedImages.Any())
 			{
 				return false;
 			}
-
 			return true;
 		}
 	}
