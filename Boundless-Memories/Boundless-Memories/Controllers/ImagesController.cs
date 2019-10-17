@@ -27,7 +27,7 @@ namespace Memories.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> UploadImageAsync(List<IFormFile> files)
         {
-			var result = await m_ImageManagement.UploadImageAsync(files);
+			var result = await m_ImageManagement.UploadImageToDisk(files);
             return ProcessResponse(result);
         }
 
@@ -55,7 +55,6 @@ namespace Memories.Controllers
 			HttpResponseMessage response = new HttpResponseMessage(HttpStatusCode.OK);
 			response.Content = new StreamContent(ms);
 			response.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-
 
 			return ProcessResponse(result);
 		}

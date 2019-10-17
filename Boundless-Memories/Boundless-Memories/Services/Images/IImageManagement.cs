@@ -13,6 +13,8 @@ namespace Memories.Services.ImageManagement
 		Task<BaseBodyResponse<UploadImageResponse>> UploadImageAsync(List<IFormFile> files);
 		Task<BaseBodyResponse<GetImageResponse>> GetImage(Guid guid);
 		Task<BaseBodyResponse<GetImageResponse>> GetImageById(int id);
+		Task<BaseBodyResponse<bool>> UploadImageToDisk(List<IFormFile> images);
+
 
 	}
 }

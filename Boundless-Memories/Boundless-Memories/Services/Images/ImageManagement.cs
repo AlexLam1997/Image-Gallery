@@ -8,19 +8,23 @@ using Boundless_Memories.Extensions;
 using Boundless_Memories.Repositories.ImageRepository;
 using Memories.Services.Errors;
 using Memories.Models.Images;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Memories.Services.ImageManagement
 {
 	public class ImageManagement : IImageManagement
     {
 		private readonly IImageRepository m_ImageRepository;
+		private readonly IHostingEnvironment m_HostingEnvironment;
 
-		public ImageManagement(IImageRepository imageRepository)
+		public ImageManagement(IImageRepository imageRepository, IHostingEnvironment hostingEnvironment)
 		{
 			m_ImageRepository = imageRepository;
+			m_HostingEnvironment = hostingEnvironment;
 		}
 
-        public async Task<BaseBodyResponse<UploadImageResponse>> UploadImageAsync(List<IFormFile> files )
+        public async Task<BaseBodyResponse<UploadImageResponse>> UploadImageAsync(List<IFormFile> files)
         {
 			if (files.Count == 0)
 			{
@@ -83,6 +87,24 @@ namespace Memories.Services.ImageManagement
 				Data = image.Data
 			};
 			return new BaseBodyResponse<GetImageResponse>(response);
+		}
+
+		public async Task<BaseBodyResponse<bool>> UploadImageToDisk(List<IFormFile> images)
+		{
+			var uploads = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\UserImages"));
+			foreach (var image in images)
+			{
+				if (image.Length > 0)
+				{
+					var filePath = Path.Combine(uploads, image.FileName);
+					using (var fileStream = new FileStream(filePath, FileMode.Create))
+					{
+						await image.CopyToAsync(fileStream);
+					}
+				}
+			}
+
+			return new BaseBodyResponse<bool>(true);
 		}
 	}
 }
