@@ -8,7 +8,6 @@ CREATE TABLE Users
 	[PW] NVARCHAR(50),
 	[Salt] NVARCHAR(255),
 	CONSTRAINT [Users_PK] PRIMARY KEY ([Id])
-
 );
 
 CREATE TABLE Images
@@ -24,7 +23,6 @@ CREATE TABLE ImageAssociations
 (
 	[UserId] INT NOT NULL,
 	[ImageId] INT NOT NULL,
-	[IsOwner] BIT NOT NULL default 0, 
 	CONSTRAINT [FK_ImageAssociations_Users] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([Id]),
 	CONSTRAINT [FK_ImageAssociations_Images] FOREIGN KEY ([ImageId]) REFERENCES [dbo].[Images] ([Id]),
 	CONSTRAINT [ImageAssociations_PK] PRIMARY KEY CLUSTERED ([UserId] ASC, [ImageId] ASC)

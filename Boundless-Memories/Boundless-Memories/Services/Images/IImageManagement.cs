@@ -11,9 +11,9 @@ namespace Memories.Services.ImageManagement
 {
     public interface IImageManagement
     {
-		Task<BaseBodyResponse<List<Images>>> GetImageAsync();
+		Task<BaseBodyResponse<List<Images>>> GetImagesAsync();
 		Task<BaseBodyResponse<bool>> UploadImageAsync(List<IFormFile> images);
-
+		Task<Byte[]> GetImageBytesByGuidAsync(Guid guid);
 
 	}
 }

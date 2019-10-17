@@ -8,7 +8,12 @@ namespace Memories.Controllers
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
-
+		/// <summary>
+		/// Returns a Http response with the BaseResponse as content and status code corresponding to error 
+		/// code or 200 if no error
+		/// </summary>
+		/// <param name="response"></param>
+		/// <returns></returns>
         public IActionResult ProcessResponse(BaseResponse response)
         {
             var statusCode = MapHttpStatusCode(response?.Error);

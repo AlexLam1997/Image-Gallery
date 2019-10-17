@@ -16,27 +16,39 @@ namespace Memories.Services.ImageManagement
 	public class ImageManagement : IImageManagement
 	{
 		private readonly IImageRepository m_ImageRepository;
-		private readonly IHostingEnvironment m_HostingEnvironment;
 		private readonly IAuthorizationContext m_AuthorizationContext;
 
-		public ImageManagement(IImageRepository imageRepository, IHostingEnvironment hostingEnvironment, IAuthorizationContext authorizationContext)
+		private readonly string imageBucketPath;
+
+		public ImageManagement(IImageRepository imageRepository, IAuthorizationContext authorizationContext)
 		{
 			m_ImageRepository = imageRepository;
-			m_HostingEnvironment = hostingEnvironment;
 			m_AuthorizationContext = authorizationContext;
+			imageBucketPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\UserImages"));
 		}
 
-		public async Task<BaseBodyResponse<List<Images>>> GetImageAsync()
+		public async Task<BaseBodyResponse<List<Images>>> GetImagesAsync()
 		{
 			var userId = m_AuthorizationContext.getCurrentUserId();
 
 			// error check
-			var response = await m_ImageRepository.GetImagesAsync(userId);
-			return new BaseBodyResponse<List<Images>>(response);
+			var userImages = await m_ImageRepository.GetImagesAsync(userId);
+			return new BaseBodyResponse<List<Images>>(userImages);
+		}
+
+		public async Task<byte[]> GetImageBytesByGuidAsync(Guid guid)
+		{
+			var userId = m_AuthorizationContext.getCurrentUserId();
+			var image = await m_ImageRepository.GetImageByGuidAsync(guid, userId);
+
+			var imagePath = Path.Combine(imageBucketPath, image.StorageName.ToString());
+			Byte[] imageByteArray = File.ReadAllBytes(imagePath);
+			return imageByteArray; 
 		}
 
 		public async Task<BaseBodyResponse<bool>> UploadImageAsync(List<IFormFile> files)
 		{
+			// Using guids as the image file name when storing on the server 
 			var fileImages = files.Select(x => new ImageWithFile
 			{
 				Image = new Images
@@ -63,8 +75,9 @@ namespace Memories.Services.ImageManagement
 			}
 
 			var images = fileImages.Select(x => x.Image).ToList();
+			var userId = m_AuthorizationContext.getCurrentUserId();
 
-			var response = await m_ImageRepository.CreateImagesAsync(images);
+			var response = await m_ImageRepository.CreateImagesAsync(images, userId);
 
 			return new BaseBodyResponse<bool>(response);
 		}

@@ -11,5 +11,6 @@ namespace Boundless_Memories.Repositories.ImageRepository
 		Task<List<Images>> UploadImagesAsync(List<Images> images);
 		Task<List<Images>> GetImagesAsync(int userId);
 		Task<bool> CreateImagesAsync(List<Images> images, int userId);
+		Task<Images> GetImageByGuidAsync(Guid guid, int userId);
 	}
 }

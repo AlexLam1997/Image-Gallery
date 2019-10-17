@@ -31,14 +31,29 @@ namespace Memories.Controllers
             return ProcessResponse(result);
         }
 
+		/// <summary>
+		/// Used to get the list of images the user has access to. 
+		/// This includes both the url of the image and additional image information.
+		/// The image url can be used to seperately retrieve the actual image file.
+		/// </summary>
+		/// <returns></returns>
 		[HttpGet("get")]
-		public IActionResult GetImage()
+		public async Task<IActionResult> GetImageAsync()
 		{
-			var path = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\UserImages"));
-
-			Byte[] b = System.IO.File.ReadAllBytes(Path.Combine(path, "test.jpg"));   // You can use your own method over here.         
-			return File(b, "image/jpeg");
+			var result = await m_ImageManagement.GetImagesAsync();
+			return ProcessResponse(result);
 		}
 
+		/// <summary>
+		/// Gets the image file associated with the Guid if the currently logged in user has access to it
+		/// </summary>
+		/// <param name="imageGuid"></param>
+		/// <returns></returns>
+		[HttpGet("get/{imageGuid : Guid}")]
+		public async Task<IActionResult> GetImage(Guid imageGuid)
+		{
+			var imageByteArray = await m_ImageManagement.GetImageBytesByGuidAsync(imageGuid);
+			return File(imageByteArray, "image/png");
+		}
 	}
 }
