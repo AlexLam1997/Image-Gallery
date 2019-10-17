@@ -1,8 +1,5 @@
 <template>
-  <div class="hello">
-    <!-- <input type = "file" @change="onFileSelected">
-    <button v-on:click="uploadImage()">Upload Image</button> -->
-
+  <div class="upload">
     <form id="form" name="form" enctype="multipart/form-data" method="post">
       <div class="buttons">
         <div class="upload-button">
@@ -11,7 +8,6 @@
         </div>
       </div>
     </form>
-
   </div>
 </template>
 
@@ -30,9 +26,6 @@ let uploadImage = async function(inputId){
   for (var i = 0; i != files.length; i++) {
     formData.append("files", files[i]);
   }
-
-  // let fd = new FormData()
-  // fd.append('image', this.selectedImage, this.selectedImage.name)
   axios.post("https://localhost:44394/api/Images/upload", formData)
 }
 
