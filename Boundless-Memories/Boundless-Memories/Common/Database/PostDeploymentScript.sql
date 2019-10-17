@@ -1,0 +1,20 @@
+﻿CREATE TABLE Users
+(
+	[ID] INT PRIMARY KEY IDENTITY(1, 1), 
+	[Username] NVARCHAR(50),
+	[PW] NVARCHAR(50),
+	[Salt] NVARCHAR(255)
+);
+
+CREATE TABLE Images
+( 
+	[ID] INT PRIMARY KEY IDENTITY(1, 1), 
+    [Guid] UNIQUEIDENTIFIER,  
+    [Name] NVARCHAR(200) NOT NULL,  
+    [Data] VARBINARY(MAX) NOT NULL,  
+    [Length] INT NOT NULL,  
+    [Width] INT NOT NULL,  
+    [Height] INT NOT NULL,  
+    [ContentType] VARCHAR(50) NOT NULL 
+) 
+

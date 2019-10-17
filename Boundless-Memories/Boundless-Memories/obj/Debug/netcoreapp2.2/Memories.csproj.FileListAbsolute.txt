@@ -1,0 +1,14 @@
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\bin\Debug\netcoreapp2.2\Memories.deps.json
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\bin\Debug\netcoreapp2.2\Memories.runtimeconfig.json
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\bin\Debug\netcoreapp2.2\Memories.runtimeconfig.dev.json
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\bin\Debug\netcoreapp2.2\Memories.dll
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\bin\Debug\netcoreapp2.2\Memories.pdb
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.csprojAssemblyReference.cache
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.csproj.CoreCompileInputs.cache
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.RazorAssemblyInfo.cache
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.RazorAssemblyInfo.cs
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.AssemblyInfoInputs.cache
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.AssemblyInfo.cs
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.RazorTargetAssemblyInfo.cache
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.dll
+C:\Users\xela2\github\name-tbd\Boundless-Memories\Boundless-Memories\obj\Debug\netcoreapp2.2\Memories.pdb
