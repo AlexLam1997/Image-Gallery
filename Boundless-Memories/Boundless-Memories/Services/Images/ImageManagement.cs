@@ -50,8 +50,8 @@ namespace Memories.Services.ImageManagement
 		{
 			var userId = m_AuthorizationContext.getCurrentUserId();
 			var image = await m_ImageRepository.GetImageByGuidAsync(guid, userId);
-
-			var imagePath = Path.Combine(imageBucketPath, image.StorageName.ToString());
+			var imageExtension = image.FileName.Split('.')[1];
+			var imagePath = Path.Combine(imageBucketPath, $"{image.StorageName.ToString()}.{imageExtension}");
 			Byte[] imageByteArray = File.ReadAllBytes(imagePath);
 			return imageByteArray; 
 		}
@@ -69,7 +69,7 @@ namespace Memories.Services.ImageManagement
 				Image = new Images
 				{
 					FileName = x.FileName,
-					StorageName = new Guid()
+					StorageName = Guid.NewGuid()
 				},
 				File = x
 			}).ToList();
@@ -81,7 +81,8 @@ namespace Memories.Services.ImageManagement
 				// Save images to filesystem
 				if (fileImage.File.Length > 0)
 				{
-					var filePath = Path.Combine(uploads, fileImage.Image.StorageName.ToString());
+					var fileExtention = fileImage.File.FileName.Split('.')[1];
+					var filePath = Path.Combine(uploads, $"{fileImage.Image.StorageName.ToString()}.{fileExtention}");
 					using (var fileStream = new FileStream(filePath, FileMode.Create))
 					{
 						await fileImage.File.CopyToAsync(fileStream);
@@ -91,10 +92,16 @@ namespace Memories.Services.ImageManagement
 
 			var images = fileImages.Select(x => x.Image).ToList();
 			var userId = m_AuthorizationContext.getCurrentUserId();
-
-			var response = await m_ImageRepository.CreateImagesAsync(images, userId);
-
-			return new BaseBodyResponse<bool>(response);
+			try
+			{
+				var response = await m_ImageRepository.CreateImagesAsync(images, userId);
+				return new BaseBodyResponse<bool>(response);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				return null;
+			}
 		}
 
 		public async Task<BaseResponse> DeleteImagesAsync(List<Guid> imageGuids)

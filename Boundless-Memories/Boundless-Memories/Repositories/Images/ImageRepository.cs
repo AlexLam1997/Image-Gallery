@@ -65,8 +65,8 @@ namespace Boundless_Memories.Repositories.ImageRepository
 		{
 			var images = (await m_MemoriesContext.ImageAssociations.AsNoTracking()
 				.Include(x => x.Image)
-				.Include(x => x.User)
-				.Where(x => x.UserId == userId)
+				//.Include(x => x.User)
+				//.Where(x => x.UserId == userId)
 				.SingleOrDefaultAsync(x => x.Image.StorageName.Equals(guid)))
 				.Image;
 
@@ -98,9 +98,10 @@ namespace Boundless_Memories.Repositories.ImageRepository
 			//Create links between user and the images he has added 
 			var userImageLinks = images.Select(x => new ImageAssociations
 			{
-				User = user, 
-				Image = x
-			});
+				User = user,
+				Image = x,
+				IsOwner = true
+			}); 
 
 			await m_MemoriesContext.Images.AddRangeAsync(images);
 			await m_MemoriesContext.ImageAssociations.AddRangeAsync(userImageLinks);

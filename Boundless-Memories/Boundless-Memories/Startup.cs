@@ -29,11 +29,11 @@ namespace Memories
 			services.AddSingleton<IHostingEnvironment>(HostingEnvironment);
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-		
-			// TODO add authorization 
 
+			// TODO add authorization 
+			//var connection = "Server=tcp:memories.database.windows.net,1433;Initial Catalog=Memories;Persist Security Info=False;User ID=alexander.lam;Password=m5m0r!5s;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 			var connection = @"Server=.\SQLEXPRESS;Database=Memories;Trusted_Connection=True;ConnectRetryCount=0";
-            services.AddDbContext<MemoriesContext>(options => options.UseSqlServer(connection));
+			services.AddDbContext<MemoriesContext>(options => options.UseSqlServer(connection));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
