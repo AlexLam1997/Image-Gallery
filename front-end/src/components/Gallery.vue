@@ -2,8 +2,10 @@
   <div class="gallery">
     <div class="gallery-panel"
          v-for="photo in Images"
-         :key="photo.Id">
-      <img :src="getImageUrl(photo.storageName)">
+         :key="photo.id">
+      <router-link :to="`/photo/${photo.id}`">
+        <img :src="getImageUrl(photo.storageName)">
+      </router-link>
     </div>
   </div>
 </template>
