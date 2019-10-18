@@ -1,14 +1,12 @@
 <template>
-  <div class="upload">
-    <form id="form" name="form" enctype="multipart/form-data" method="post">
-      <div class="buttons">
-        <div class="upload-button">
-          <div class="label">Click me!</div>
-          <input id="files" name="files" type="file" size="1" multiple @change="uploadImage('files');" />
-        </div>
-      </div>
-    </form>
-  </div>
+    <label class="file-select">
+    <div class="select-button">
+      <span v-if="value">Selected File: {{value.name}}</span>
+      <span v-else>Select File</span>
+    </div>
+    <input id="files" name="files" type="file" size="1" multiple @change="uploadImage('files');" />
+  </label>
+
 </template>
 
 <script>
@@ -48,3 +46,21 @@ export default {
   }
 }
 </script>
+
+<style>
+.file-select > .select-button {
+  padding: 1rem;
+
+  color: white;
+  background-color: #1E90FF;
+
+  border-radius: .3rem;
+
+  text-align: center;
+  font-weight: bold;
+}
+
+.file-select > input[type="file"] {
+  display: none;
+}
+</style>
