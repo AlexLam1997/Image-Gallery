@@ -49,6 +49,7 @@ namespace Boundless_Memories.Repositories.ImageRepository
 				.Include(x => x.Image)
 				.Include(x => x.User)
 				.Where(x => x.UserId == userId)
+				.Where(x => !x.Image.IsDeleted)
 				.Select(x => x.Image)
 				.ToListAsync();
 
@@ -63,10 +64,12 @@ namespace Boundless_Memories.Repositories.ImageRepository
 		/// <returns></returns>
 		public async Task<Images> GetImageByGuidAsync(Guid guid, int userId)
 		{
+			//TODO limit by userid
 			var images = (await m_MemoriesContext.ImageAssociations.AsNoTracking()
 				.Include(x => x.Image)
 				//.Include(x => x.User)
 				//.Where(x => x.UserId == userId)
+				.Where(x => !x.Image.IsDeleted)
 				.SingleOrDefaultAsync(x => x.Image.StorageName.Equals(guid)))
 				.Image;
 

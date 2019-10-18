@@ -1,8 +1,7 @@
 <template>
     <label class="file-select">
     <div class="select-button">
-      <span v-if="value">Selected File: {{value.name}}</span>
-      <span v-else>Select File</span>
+      <span>Upload Images</span>
     </div>
     <input id="files" name="files" type="file" size="1" multiple @change="uploadImage('files');" />
   </label>
@@ -12,10 +11,7 @@
 <script>
 import axios from 'axios'
 
-let onFileSelected = function(event){
-  this.selectedImage = event.target.files[0]
-}
-let uploadImage = async function(inputId){
+let uploadImage = function(inputId){
   var input = document.getElementById(inputId);
   var files = input.files;
   var formData = new FormData();
@@ -38,7 +34,6 @@ export default {
     }
   },
   methods: {
-    onFileSelected : onFileSelected, 
     uploadImage : uploadImage,
     notifyGallery(){
         this.$root.$emit('gallery')

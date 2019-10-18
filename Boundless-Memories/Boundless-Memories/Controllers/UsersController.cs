@@ -16,13 +16,11 @@ namespace Memories.Controllers
 			m_UsersManagement = UsersManagement;
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> QueryUsers()
-		{
-			var result = await m_UsersManagement.QueryUsersAsync();
-			return ProcessResponse(result);
-		}
-
+		/// <summary>
+		/// Creates a new user
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		[HttpPut]
 		public async Task<IActionResult> CreateUser([FromBody]CreateUserRequest request)
 		{
@@ -30,6 +28,11 @@ namespace Memories.Controllers
 			return ProcessResponse(result);
 		}
 
+		/// <summary>
+		/// Deletes an old user
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		[HttpDelete]
 		public async Task<IActionResult> DeleteUser([FromBody]DeleteUserRequest request)
 		{
@@ -37,6 +40,12 @@ namespace Memories.Controllers
 			return ProcessResponse(result);
 		}
 
+		/// <summary>
+		/// Updates a user
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="request"></param>
+		/// <returns></returns>
 		[HttpPost("{id}")]
 		public async Task<IActionResult> UpdateUser(int id, [FromBody]UpdateUserRequest request)
 		{

@@ -34,11 +34,23 @@ namespace Memories.Services.ImageManagement
 		/// <returns></returns>
 		public async Task<BaseBodyResponse<List<Images>>> GetImagesAsync()
 		{
-			var userId = m_AuthorizationContext.getCurrentUserId();
+			try
+			{
+				var userId = m_AuthorizationContext.getCurrentUserId();
 
-			// error check
-			var userImages = await m_ImageRepository.GetImagesAsync(userId);
-			return new BaseBodyResponse<List<Images>>(userImages);
+				if (userId < 0)
+				{
+					// User is not logged in 
+					return new BaseBodyResponse<List<Images>>(new ManagementError(EnumManagementError.NO_PERMISSION));
+				}
+
+				var userImages = await m_ImageRepository.GetImagesAsync(userId);
+				return new BaseBodyResponse<List<Images>>(userImages);
+			}catch(Exception e)
+			{
+				return new BaseBodyResponse<List<Images>>(new ManagementError(EnumManagementError.UNKNOWN_ERROR, e.ToString()));
+
+			}
 		}
 
 		/// <summary>
@@ -63,71 +75,90 @@ namespace Memories.Services.ImageManagement
 		/// <returns></returns>
 		public async Task<BaseBodyResponse<bool>> UploadImageAsync(List<IFormFile> files)
 		{
-			// Using guids as the image file name when storing on the server 
-			var fileImages = files.Select(x => new ImageWithFile
-			{
-				Image = new Images
-				{
-					FileName = x.FileName,
-					StorageName = Guid.NewGuid()
-				},
-				File = x
-			}).ToList();
-
-			var uploads = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\UserImages"));
-
-			foreach (var fileImage in fileImages)
-			{
-				// Save images to filesystem
-				if (fileImage.File.Length > 0)
-				{
-					var fileExtention = fileImage.File.FileName.Split('.')[1];
-					var filePath = Path.Combine(uploads, $"{fileImage.Image.StorageName.ToString()}.{fileExtention}");
-					using (var fileStream = new FileStream(filePath, FileMode.Create))
-					{
-						await fileImage.File.CopyToAsync(fileStream);
-					}
-				}
-			}
-
-			var images = fileImages.Select(x => x.Image).ToList();
-			var userId = m_AuthorizationContext.getCurrentUserId();
 			try
 			{
+				var userId = m_AuthorizationContext.getCurrentUserId();
+				
+				if(userId < 0)
+				{
+					// User is not logged in 
+					return new BaseBodyResponse<bool>(new ManagementError(EnumManagementError.NO_PERMISSION));
+				}
+
+				// Using guids as the image file name when storing on the server 
+				var fileImages = files.Select(x => new ImageWithFile
+				{
+					Image = new Images
+					{
+						FileName = x.FileName,
+						StorageName = Guid.NewGuid()
+					},
+					File = x
+				}).ToList();
+
+				var uploads = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..\\..\\..\\UserImages"));
+
+				foreach (var fileImage in fileImages)
+				{
+					// Save images to filesystem
+					if (fileImage.File.Length > 0)
+					{
+						var fileExtention = fileImage.File.FileName.Split('.')[1];
+						var filePath = Path.Combine(uploads, $"{fileImage.Image.StorageName.ToString()}.{fileExtention}");
+						using (var fileStream = new FileStream(filePath, FileMode.Create))
+						{
+							await fileImage.File.CopyToAsync(fileStream);
+						}
+					}
+				}
+
+				var images = fileImages.Select(x => x.Image).ToList();
+
 				var response = await m_ImageRepository.CreateImagesAsync(images, userId);
 				return new BaseBodyResponse<bool>(response);
-			}
-			catch (Exception e)
+
+			}catch(Exception e)
 			{
-				Console.WriteLine(e);
-				return null;
+				return new BaseBodyResponse<bool>(new ManagementError(EnumManagementError.UNKNOWN_ERROR, e.ToString()));
 			}
 		}
 
 		public async Task<BaseResponse> DeleteImagesAsync(List<Guid> imageGuids)
 		{
-			var userId = m_AuthorizationContext.getCurrentUserId();
-
-			if (!await IsUserOwner(userId, imageGuids))
+			try
 			{
-				return new BaseResponse(new ManagementError(EnumManagementError.NO_PERMISSION));
-			}
+				var userId = m_AuthorizationContext.getCurrentUserId();
 
-			await m_ImageRepository.DeleteImagesAsync(imageGuids);
-			return new BaseResponse();
+				if (!await IsUserOwner(userId, imageGuids))
+				{
+					return new BaseResponse(new ManagementError(EnumManagementError.NO_PERMISSION));
+				}
+
+				await m_ImageRepository.DeleteImagesAsync(imageGuids);
+				return new BaseResponse();
+			}catch(Exception e)
+			{
+				return new BaseResponse(new ManagementError(EnumManagementError.UNKNOWN_ERROR, e.ToString()));
+			}
 		}
 
 		public async Task<BaseResponse> ShareImagesAsync(List<Guid> imageGuids)
 		{
-			var userId = m_AuthorizationContext.getCurrentUserId();
-
-			if (!await IsUserOwner(userId, imageGuids))
+			try
 			{
-				return new BaseResponse(new ManagementError(EnumManagementError.NO_PERMISSION));
-			}
+				var userId = m_AuthorizationContext.getCurrentUserId();
 
-			await m_ImageRepository.AddImageAssociationAsync(userId, imageGuids);
-			return new BaseResponse();
+				if (!await IsUserOwner(userId, imageGuids))
+				{
+					return new BaseResponse(new ManagementError(EnumManagementError.NO_PERMISSION));
+				}
+
+				await m_ImageRepository.AddImageAssociationAsync(userId, imageGuids);
+				return new BaseResponse();
+			}catch(Exception e)
+			{
+				return new BaseResponse(new ManagementError(EnumManagementError.UNKNOWN_ERROR, e.ToString()));
+			}
 		}
 
 		// Checks to see if the current user owns all the images in the list

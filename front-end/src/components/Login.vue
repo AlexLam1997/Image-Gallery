@@ -33,7 +33,9 @@
                 signUpInput: {
                     username: "",
                     password: ""
-                }
+                },
+                showLoginAlert: false,
+                showSignUpAlert: false
             }
         },
         
@@ -43,6 +45,8 @@
                     LoginRepository.login(this.loginInput.username, this.loginInput.password).then( (resp) => {
                         this.$store.dispatch('updateKey', resp.data.payload.accessToken)
                         this.$router.push('/home')
+                    }).catch( () => {
+                        this.showLoginAlert = true
                     })
                     this.loginInput.username = ""
                     this.loginInput.password = ""
@@ -56,9 +60,10 @@
                         Username: this.signUpInput.username,
                         Password: this.signUpInput.password
                     }
-                    axios.put(baseUrl + "api/Users", request).then(function(response){
-                        //TODO failure
-                        console.log(response)
+                    axios.put(baseUrl + "api/Users", request).then(() => {
+                        this.showSignUpAlert = true
+                    }).catch( () => {
+
                     })
                     this.signUpInput.username = ""
                     this.signUpInput.password = ""

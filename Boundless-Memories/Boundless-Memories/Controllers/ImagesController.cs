@@ -59,5 +59,17 @@ namespace Memories.Controllers
 			var imageByteArray = await m_ImageManagement.GetImageBytesByGuidAsync(imageGuid);
 			return File(imageByteArray, "image/png");
 		}
+		
+		/// <summary>
+		/// Sets the is deleted flag for the provided imgaes to true, making them non-accessible
+		/// </summary>
+		/// <param name="imageGuids"></param>
+		/// <returns></returns>
+		[HttpPost("delete")]
+		public async Task<IActionResult> DeleteImagesAsync(List<Guid> imageGuids)
+		{
+			var response = await m_ImageManagement.DeleteImagesAsync(imageGuids);
+			return ProcessResponse(response);
+		}
 	}
 }
