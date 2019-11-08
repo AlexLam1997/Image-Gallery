@@ -6,12 +6,12 @@
         :rootClass="'custom-style'">
     </vue-select-image>
 
-    <div class="gallery">
+    <!-- <div class="gallery">
       <div class ="gallery-panel" v-for="img in Images" :key="img.id">
           <img :src="img.src"/>
       </div>
       
-    </div>
+    </div> -->
     <div class="delete-button" v-on:click="DeleteImages">Delete Selected Images</div>
   </div>
 </template>
@@ -111,7 +111,10 @@ export default {
   text-align: center;
   font-weight: bold;
   }
-
+  
+  ul{
+  list-style-type: none;
+  }
 .custom-style {
   // display: flex;
   // justify-content: center;
