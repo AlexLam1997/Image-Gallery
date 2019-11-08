@@ -1,4 +1,4 @@
-# Image-Cloud-Gallery
+# Image-Gallery
 
 A web Image repository with a Vue.js frontend and a C# .netCore backend with integration to a SQL Server Database. It uses claims-based authorization to enable multiple users to safely upload and access their images without fear of another user getting access to them. It also allows for selection of images in the gallery for easy manipulation. Also supports bulk upload and deletion of images. A preview of the web application: <br> <br> 
 ![Application_Preview](./preview.png) <br>
